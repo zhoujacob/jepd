@@ -56,7 +56,9 @@ export async function removeAccess(
   const approvalId = formData.get("approval_id");
   if (
     typeof approvalId !== "string" ||
-    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(approvalId)
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      approvalId,
+    )
   ) {
     return { error: "Invalid access record.", success: "" };
   }
