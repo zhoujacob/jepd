@@ -87,6 +87,8 @@ To stop future reminders, run `select cron.unschedule('discord-session-reminders
 
 ## 7. Deploy and check the real production URL
 
+- [ ] Enable **Web Analytics** in the Vercel project dashboard before deploying. The root layout includes `@vercel/analytics/next` for site-wide page views; no extra environment variables are needed. After deployment, visit a few pages and check the project's **Analytics** tab. If no data appears, check browser content blockers and confirm you deployed after enabling Analytics.
+
 - [ ] Run the release checks on the version being deployed:
 
   ```sh

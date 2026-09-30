@@ -18,6 +18,8 @@ A small executive workspace built with Next.js App Router, TypeScript, Tailwind 
 
 For the first deployment, follow the [Vercel checklist](docs/DEPLOYMENT.md) in order. It covers the production environment, Google/Supabase redirects, Discord connections and reminders, and launch checks. A custom domain is optional.
 
+Vercel Web Analytics tracks page views across the site through the root layout. Enable **Web Analytics** in the Vercel project dashboard, deploy the changes, then visit the site and check the **Analytics** tab. No additional environment variables are required.
+
 ## Execs and admins: use the dashboard
 
 1. Give a club admin the exact email of the Google account you will use.
