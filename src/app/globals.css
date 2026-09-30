@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #242621;
+  --color-muted: #74776f;
+  --color-line: #e5e7df;
+  --color-gold: #f4cd46;
+  --color-paper: #f8f9f5;
+  --color-green: #324b3b;
+  --font-sans: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-paper font-sans text-sm text-ink antialiased;
+    line-height: normal;
+  }
+  button,
+  a,
+  input,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+  button:disabled {
+    @apply cursor-wait opacity-65;
+  }
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    @apply outline-3 outline-offset-4 outline-[#9c7b0d];
+  }
+  h1 {
+    @apply text-[34px] leading-[1.2] font-bold tracking-[-1.1px] max-[760px]:text-[29px];
+  }
+  h2 {
+    @apply font-bold tracking-[-0.5px];
+  }
+  h3,
+  strong {
+    @apply font-bold;
+  }
+  svg {
+    @apply shrink-0;
+  }
+}
+
+/* Shared patterns used across multiple routes. */
+@layer components {
+  .eyebrow {
+    @apply mb-3 text-[10px] font-bold tracking-[1.8px] text-[#7c806f];
+  }
+  .page-heading {
+    @apply mb-[31px] max-[760px]:mb-[25px];
+  }
+  .page-heading > p:last-child {
+    @apply mt-3 text-sm leading-[1.6] text-muted max-[760px]:text-[13px];
+  }
+  .form-error {
+    @apply mb-4 rounded-md bg-[#fff2ee] px-3 py-2.5 text-xs leading-[1.6] text-[#9b3a27];
+  }
+}

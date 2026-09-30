@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+*.tsbuildinfo
+.DS_Store
+
+# Hosting and local Supabase state
+.vercel/
+supabase/.temp/
+supabase/.branches/
+
+# Local logs and private keys
+*.log
+*.pem
+*.key
