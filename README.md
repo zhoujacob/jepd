@@ -85,6 +85,14 @@ See the [Discord guide](docs/DISCORD.md) for setup, timing, delivery checks, ret
 
 ## Development checks
 
+Run everything with one command before finishing a change:
+
+```sh
+npm run check
+```
+
+It runs these in order and stops at the first failure:
+
 ```sh
 npm test
 npm run lint

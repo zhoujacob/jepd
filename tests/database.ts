@@ -1,13 +1,22 @@
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import type { PGlite } from "@electric-sql/pglite";
+
+const migrationsFolder = new URL("../supabase/migrations/", import.meta.url);
 
 export function readInitialSchema() {
   return readFile(
-    new URL(
-      "../supabase/migrations/20260929000000_initial_schema.sql",
-      import.meta.url,
-    ),
+    new URL("20260929000000_initial_schema.sql", migrationsFolder),
     "utf8",
+  );
+}
+
+// Every migration, oldest first: timestamped filenames sort in apply order.
+async function readMigrations() {
+  const files = (await readdir(migrationsFolder))
+    .filter((file) => file.endsWith(".sql"))
+    .sort();
+  return Promise.all(
+    files.map((file) => readFile(new URL(file, migrationsFolder), "utf8")),
   );
 }
 
@@ -38,5 +47,5 @@ export async function initializeDatabase(db: PGlite, network = true) {
       insert into net.requests(url,body) values(url,body) returning id;
     $$;
   `);
-  await db.exec(await readInitialSchema());
+  for (const migration of await readMigrations()) await db.exec(migration);
 }
