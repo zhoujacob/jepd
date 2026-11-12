@@ -325,6 +325,66 @@ test("time changes start a fresh series without defaults, and stopping preserves
   assert.deepEqual((await board(past)).sessions, history.sessions);
 });
 
+test("schedule changes keep a session that already started and never add one in the past", async () => {
+  const today = clubToday();
+  const weekday = ((new Date(`${today}T12:00:00Z`).getUTCDay() + 6) % 7) + 1;
+  const thisWeek = weekStart(today);
+  const nextWeek = addDays(thisWeek, 7);
+  const scheduled = (snapshot: Snapshot, date?: string) =>
+    snapshot.sessions.filter(
+      (s) => s.schedule_id !== null && (!date || s.session_date === date),
+    );
+  const backdate = (id: string) =>
+    db.query("update public.session_schedules set starts_on=$1 where id=$2", [
+      addDays(today, -7),
+      id,
+    ]);
+
+  // Midnight on today's weekday has always started, so a new series waits a week.
+  const schedule = await createSchedule(weekday, "00:00", "00:01");
+  assert.equal(scheduled(await board(thisWeek), today).length, 0);
+  assert.equal(scheduled(await board(nextWeek)).length, 1);
+
+  // Backdate the series so today's session exists, then answer it.
+  await backdate(schedule);
+  const [started] = scheduled(await board(thisWeek), today);
+  sessionId = started.id;
+  await asUser(exec, () => respond("yes"));
+
+  // A time change keeps today's session and its answer. The new series, whose
+  // slot today has also started, appears from next week only.
+  await asUser(exec, () =>
+    db.query("select public.save_session_schedule($1,'00:01','00:02',$2)", [
+      weekday,
+      schedule,
+    ]),
+  );
+  const afterChange = await board(thisWeek);
+  assert.deepEqual(
+    scheduled(afterChange, today).map((s) => s.id),
+    [started.id],
+  );
+  assert.equal(
+    afterChange.responses.filter((r) => r.session_id === started.id).length,
+    1,
+  );
+  const upcoming = scheduled(await board(nextWeek));
+  assert.deepEqual(
+    upcoming.map((s) => s.starts_at),
+    ["00:01:00"],
+  );
+
+  // Stopping a series also keeps today's started session.
+  const replacement = upcoming[0].schedule_id!;
+  await backdate(replacement);
+  assert.equal(scheduled(await board(thisWeek), today).length, 2);
+  await asUser(exec, () =>
+    db.query("select public.stop_session_schedule($1)", [replacement]),
+  );
+  assert.equal(scheduled(await board(thisWeek), today).length, 2);
+  assert.equal(scheduled(await board(nextWeek)).length, 0);
+});
+
 test("duplicate schedules, invalid defaults and invalid times roll back safely", async () => {
   const schedule = await createSchedule();
   await asUser(exec, async () => {

@@ -18,6 +18,14 @@ The baseline **refuses an existing app schema, even with empty tables**. It is n
 
 Once this baseline has been applied to the production project, keep it unchanged and add future numbered migrations for changes. Do not repeatedly squash deployed history.
 
+## Later migrations
+
+Run each complete file once in SQL Editor, in filename order, after the baseline. Each is safe for existing data.
+
+| File                                                                                              | Change                                                                                                                             |
+| ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| [`20261112000000_keep_started_sessions.sql`](migrations/20261112000000_keep_started_sessions.sql) | Changing or stopping a weekly session keeps sessions that have already started, and a new series never adds a session in the past. |
+
 ## Operational scripts (separate from schema migrations)
 
 Run these deliberately in SQL Editor after setup:

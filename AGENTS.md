@@ -48,7 +48,7 @@ Shared code is in `src/lib/` (`auth.ts` guards, `sessions.ts` types and date hel
 
 - Keep complete Tailwind class names in the feature's `*-styles.ts`. Never build class names from pieces.
 - Use the theme colours in `src/app/globals.css` (`ink`, `muted`, `line`, `gold`, `paper`, `green`) instead of new hex values, and reuse `.page-heading`, `.eyebrow`, and `.form-error`.
-- Copy form patterns from `sessions/`: `useActionState` with `{ error, success }` state, `SessionFeedback`, and the button and input styles in `session-styles.ts`.
+- Copy form patterns from `sessions/`: the `useSessionForm` hook (`{ error, success }` state, submitted from `onSubmit`), `SessionFeedback`, and the button and input styles in `session-styles.ts`. Do not use `<form action={...}>` for a form with fields: React resets it after every submit, including a rejected one.
 - Dates are `YYYY-MM-DD` strings in Waterloo time. Use the helpers in `src/lib/sessions.ts`. Do not do arithmetic on local `Date` objects.
 
 ## Adding a page

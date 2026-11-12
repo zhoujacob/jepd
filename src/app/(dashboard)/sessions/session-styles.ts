@@ -33,13 +33,16 @@ export const sessionStyles = {
   table: "w-full border-collapse text-left text-sm text-black",
   srOnly: "sr-only",
   headerRow: "bg-[#94dcf4]",
-  corner: "sticky left-0 z-10 w-40 min-w-36 bg-[#94dcf4] px-3 py-2",
-  sessionHeader: "min-w-44 px-3 py-2 text-center text-lg font-bold",
-  sessionTime: "mt-1 whitespace-nowrap",
+  // Narrower columns below `sm` so a phone shows more than one session at a time.
+  corner:
+    "sticky left-0 z-10 w-28 min-w-28 bg-[#94dcf4] px-2 py-2 sm:w-40 sm:min-w-36 sm:px-3",
+  sessionHeader:
+    "min-w-24 px-2 py-2 text-center text-sm font-bold sm:min-w-44 sm:px-3 sm:text-lg",
+  sessionTime: "mt-1 sm:whitespace-nowrap",
   row: "h-11",
   nameCell:
-    "sticky left-0 z-10 h-11 bg-[#caedfa] px-3 py-0 text-lg font-normal",
-  name: "block max-w-44 truncate",
+    "sticky left-0 z-10 h-11 bg-[#caedfa] px-2 py-0 text-sm font-normal sm:px-3 sm:text-lg",
+  name: "block max-w-24 truncate sm:max-w-44",
   youLabel: "ml-1 text-xs text-[#20516b]",
   responseCell: "h-11 p-0 align-top",
   countRow: "border-t border-[#b8dce8] bg-[#eaf7fc] text-xs text-[#20516b]",
@@ -61,13 +64,13 @@ export const sessionStyles = {
   saveError: "text-red-800",
   saved: "text-green",
   navigationLink:
-    "inline-flex min-h-11 items-center justify-center rounded-md border border-line bg-white px-3 text-sm hover:bg-paper",
+    "relative inline-flex min-h-11 items-center justify-center rounded-md border border-line bg-white px-3 text-sm hover:bg-paper",
   input:
     "mt-2 min-h-11 w-full rounded-md border border-line bg-white px-3 py-2 text-sm",
   legendSwatch: "size-4 border border-black/10",
   readOnlyResponse: "flex h-11 items-center justify-center px-2 text-xs",
   responseSelect:
-    "h-11 w-full cursor-pointer rounded-none border-0 px-3 text-center text-sm font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#20516b] disabled:cursor-wait",
+    "h-11 w-full cursor-pointer rounded-none border-0 px-3 text-center text-sm font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#20516b] aria-busy:cursor-wait",
   cellError: "bg-white px-2 py-1 text-xs",
 } as const;
 

@@ -33,6 +33,7 @@ export default async function HomePage() {
               className={styles.card}
               key={item.name}
               href={`/${item.icon}`}
+              prefetch={false}
             >
               <span className={styles.icon}>
                 <Icon name={item.icon} />

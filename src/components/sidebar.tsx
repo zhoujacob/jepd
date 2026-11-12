@@ -6,6 +6,7 @@ import { useFormStatus } from "react-dom";
 import { logout } from "@/app/actions";
 import { Brand } from "./brand";
 import { Icon } from "./icon";
+import { LinkPending } from "./link-pending";
 import type { ClubRole } from "@/lib/roles";
 import { sidebarStyles as styles } from "./sidebar-styles";
 
@@ -43,22 +44,26 @@ export function Sidebar({ email, role }: { email: string; role: ClubRole }) {
           <Link
             key={item.href}
             href={item.href}
+            prefetch={false}
             className={styles.navigationLink}
             aria-current={pathname === item.href ? "page" : undefined}
           >
             <Icon name={item.icon} />
             {item.label}
+            <LinkPending />
           </Link>
         ))}
       </nav>
       <div className={styles.accountArea}>
         <Link
           href="/discord"
+          prefetch={false}
           className={`${styles.navigationLink} mb-4 max-[760px]:mb-0`}
           aria-current={pathname === "/discord" ? "page" : undefined}
         >
           <Icon name="accounts" />
           Discord account
+          <LinkPending />
         </Link>
         <div className={styles.profile}>
           <span className={styles.avatar} aria-hidden="true">

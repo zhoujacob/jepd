@@ -1,18 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
 import { addSession, cancelSession, updateSessionTime } from "./actions";
-import {
-  addDays,
-  type ClubSession,
-  type SessionActionState,
-} from "@/lib/sessions";
+import { addDays, type ClubSession } from "@/lib/sessions";
 
 import { TimeFields } from "./time-fields";
 import { SessionFeedback } from "./session-feedback";
 import { sessionStyles as styles } from "./session-styles";
-
-const initialState: SessionActionState = { error: "", success: "" };
+import { useSessionForm } from "./use-session-form";
 
 export function AddSessionForm({
   week,
@@ -21,13 +15,13 @@ export function AddSessionForm({
   week: string;
   defaultDate: string;
 }) {
-  const [state, action, pending] = useActionState(addSession, initialState);
+  const { state, pending, onSubmit } = useSessionForm(addSession);
   return (
     <details className={styles.addPanel}>
       <summary className={styles.addSummary}>
         Add an extra session this week
       </summary>
-      <form action={action} className={styles.addForm}>
+      <form onSubmit={onSubmit} className={styles.addForm}>
         <input type="hidden" name="week" value={week} />
         <fieldset disabled={pending} className={styles.fields}>
           <label className={styles.fieldLabel}>
@@ -60,19 +54,12 @@ export function CancelSessionForm({
   id: string;
   label: string;
 }) {
-  const [state, action, pending] = useActionState(cancelSession, initialState);
+  const { state, pending, onSubmit } = useSessionForm(
+    cancelSession,
+    `Cancel ${label} for this date only? Other weeks will stay unchanged.`,
+  );
   return (
-    <form
-      action={action}
-      onSubmit={(event) => {
-        if (
-          !window.confirm(
-            `Cancel ${label} for this date only? Other weeks will stay unchanged.`,
-          )
-        )
-          event.preventDefault();
-      }}
-    >
+    <form onSubmit={onSubmit}>
       <input type="hidden" name="session_id" value={id} />
       <button
         className={styles.removeButton}
@@ -93,10 +80,7 @@ export function UpdateSessionTimeForm({
   session: ClubSession;
   label: string;
 }) {
-  const [state, action, pending] = useActionState(
-    updateSessionTime,
-    initialState,
-  );
+  const { state, pending, onSubmit } = useSessionForm(updateSessionTime);
   return (
     <details>
       <summary
@@ -109,7 +93,7 @@ export function UpdateSessionTimeForm({
         Only this date changes. Availability answers will be cleared; execs must
         answer again.
       </p>
-      <form action={action} className={styles.addForm}>
+      <form onSubmit={onSubmit} className={styles.addForm}>
         <input type="hidden" name="session_id" value={session.id} />
         <fieldset disabled={pending} className={styles.timeFields}>
           <TimeFields

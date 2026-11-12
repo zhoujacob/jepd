@@ -30,7 +30,7 @@ Next.js route groups such as `(dashboard)` organize layouts without adding a URL
 
 Google is the only login provider. An admin preapproves an exact Google email as Exec/Admin and shares the app URL separately. Supabase creates the Auth account on Google sign-in; `activate_club_access` links a verified provider-owned Google identity to the approval. A Supabase Auth account alone is insufficient for club access.
 
-`requireExec`/`requireAdmin` validate the current user and database role on protected pages/actions. Request-local React caching avoids duplicate checks without caching authorization between requests. SQL functions and RLS enforce permissions independently of visible buttons. User-editable metadata is used for display names, never authorization.
+`requireExec`/`requireAdmin` validate the current user and database role on protected pages/actions; the two checks run together to save a round trip, and both must pass. Request-local React caching avoids duplicate checks without caching authorization between requests. `src/proxy.ts` only refreshes the session cookie, using `getClaims()` so the token is verified locally when the project has asymmetric signing keys. Dashboard links set `prefetch={false}`: every dashboard page is dynamic, so a prefetch fetches nothing and still costs an auth check. SQL functions and RLS enforce permissions independently of visible buttons. User-editable metadata is used for display names, never authorization.
 
 Normal app requests use the publishable key plus the user's cookies. Only the Discord connection callback uses `SUPABASE_SECRET_KEY` to save a provider-verified ID. It validates a signed, expiring OAuth state bound to the signed-in user and their approval ID. Removing/recreating an approval invalidates old callbacks.
 
@@ -40,22 +40,25 @@ Removing club access deletes that account's responses, defaults, and Discord con
 
 `page.tsx` loads one `get_session_week` snapshot and composes the three tabs. The files inside `src/app/(dashboard)/sessions/` separate these responsibilities:
 
-| File                                      | Responsibility                                                                   |
-| ----------------------------------------- | -------------------------------------------------------------------------------- |
-| `schedule-tabs.tsx`                       | Tab selection and keyboard navigation                                            |
-| `schedule-management.tsx`                 | Repeating and one-date management sections, including visible ownership controls |
-| `schedule-forms.tsx`                      | Add/change a repeating session or stop repeating                                 |
-| `session-forms.tsx`                       | Add an extra date, update its time, or cancel it                                 |
-| `usual-availability-form.tsx`             | Save the current exec's weekly defaults                                          |
-| `sessions-board.tsx`                      | Spreadsheet layout and local saved responses/counts                              |
-| `availability-controls.tsx`               | Availability legend and cells, including saving and error recovery               |
-| `time-fields.tsx`, `session-feedback.tsx` | Reused time inputs and form feedback                                             |
-| `session-styles.ts`                       | Named Tailwind styles for this feature                                           |
-| `actions.ts`                              | Server access checks, validation, and database writes                            |
+| File                                      | Responsibility                                                                    |
+| ----------------------------------------- | --------------------------------------------------------------------------------- |
+| `schedule-tabs.tsx`                       | Tab selection and keyboard navigation                                             |
+| `schedule-management.tsx`                 | Repeating and one-date management sections, including visible ownership controls  |
+| `schedule-forms.tsx`                      | Add/change a repeating session or stop repeating                                  |
+| `session-forms.tsx`                       | Add an extra date, update its time, or cancel it                                  |
+| `usual-availability-form.tsx`             | Save the current exec's weekly defaults                                           |
+| `sessions-board.tsx`                      | Spreadsheet layout and local saved responses/counts                               |
+| `availability-controls.tsx`               | Availability legend and cells, including saving and error recovery                |
+| `time-fields.tsx`, `session-feedback.tsx` | Reused time inputs and form feedback                                              |
+| `use-session-form.ts`                     | Submit hook for these forms: action state, optional confirm, fields kept on error |
+| `session-styles.ts`                       | Named Tailwind styles for this feature                                            |
+| `actions.ts`                              | Server access checks, validation, and database writes                             |
 
 The board keeps successful saves local; there is no live subscription. Refresh to see others' latest changes.
 
-Dates are Monday–Sunday in Waterloo time. Recurring sessions/defaults materialize on board reads and scheduled reminder checks. Only unanswered upcoming dates are autofilled; existing answers and explicit blanks survive. Changing a repeating day/time creates a new series without inherited defaults. Changing one date's time clears its answers and disables autofill for that occurrence. Cancellation retains the occurrence so generation cannot recreate it.
+Forms submit through `useSessionForm` rather than `<form action>`. React resets a form after every `action` submit, including one the server rejects, and does not re-apply a changed `defaultValue` to a `<select>`, so the plain pattern wiped typed values and showed stale defaults after a save.
+
+Dates are Monday–Sunday in Waterloo time. Recurring sessions/defaults materialize on board reads and scheduled reminder checks. Only unanswered upcoming dates are autofilled; existing answers and explicit blanks survive. Changing a repeating day/time creates a new series without inherited defaults. Changing or stopping a series cancels only its dates that have not started; a session already under way or finished today stays on the board with its answers. A new series whose slot today has already started begins the next day, so it never adds a session in the past. Changing one date's time clears its answers and disables autofill for that occurrence. Cancellation retains the occurrence so generation cannot recreate it.
 
 Execs manage their own schedules/sessions and their own availability. Admins can manage anyone's schedule/session but cannot answer on someone else's behalf. Database writes share a transaction lock to coordinate generation and changes.
 

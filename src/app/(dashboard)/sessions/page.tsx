@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireExec } from "@/lib/auth";
+import { LinkPending } from "@/components/link-pending";
 import { createClient } from "@/lib/supabase/server";
 import {
   addDays,
@@ -114,19 +115,28 @@ export default async function SessionsPage({
                 <Link
                   className={styles.navigationLink}
                   href={`/sessions?week=${addDays(week, -7)}`}
+                  prefetch={false}
                 >
                   ← Previous
+                  <LinkPending />
                 </Link>
               )}
-              <Link className={styles.navigationLink} href="/sessions">
+              <Link
+                className={styles.navigationLink}
+                href="/sessions"
+                prefetch={false}
+              >
                 This week
+                <LinkPending />
               </Link>
               {week < MAX_WEEK && (
                 <Link
                   className={styles.navigationLink}
                   href={`/sessions?week=${addDays(week, 7)}`}
+                  prefetch={false}
                 >
                   Next →
+                  <LinkPending />
                 </Link>
               )}
             </nav>

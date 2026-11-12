@@ -20,8 +20,10 @@ export async function proxy(request: NextRequest) {
       },
     },
   });
-  // Validate/refresh with Auth. Page-level guards perform authorization.
-  await supabase.auth.getUser();
+  // Refresh the session cookie. getClaims verifies the token locally when the
+  // project uses asymmetric signing keys (no Auth round trip per request) and
+  // otherwise asks Auth, as getUser would. Page-level guards do authorization.
+  await supabase.auth.getClaims();
   response.headers.set("Cache-Control", "private, no-store");
   return response;
 }

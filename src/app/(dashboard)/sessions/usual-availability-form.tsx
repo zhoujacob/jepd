@@ -1,17 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
 import {
   scheduleLabel,
   type SessionSchedule,
   type SessionDefault,
-  type SessionActionState,
 } from "@/lib/sessions";
 import { saveDefaults } from "./actions";
 import { SessionFeedback } from "./session-feedback";
 import { sessionStyles as styles } from "./session-styles";
-
-const initialState: SessionActionState = { error: "", success: "" };
+import { useSessionForm } from "./use-session-form";
 
 export function UsualAvailabilityForm({
   schedules,
@@ -20,9 +17,9 @@ export function UsualAvailabilityForm({
   schedules: SessionSchedule[];
   defaults: SessionDefault[];
 }) {
-  const [state, action, pending] = useActionState(saveDefaults, initialState);
+  const { state, pending, onSubmit } = useSessionForm(saveDefaults);
   return (
-    <form action={action}>
+    <form onSubmit={onSubmit}>
       <p className={styles.help}>
         Choose your usual response once. It fills unanswered upcoming dates
         only; existing answers and dates you clear stay unchanged.

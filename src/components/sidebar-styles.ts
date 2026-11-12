@@ -17,5 +17,5 @@ export const sidebarStyles = {
   email:
     "mt-1 block text-[11px] leading-normal text-muted [overflow-wrap:anywhere]",
   navigationLink:
-    "flex items-center gap-[13px] rounded-[7px] px-3.5 py-[13px] font-medium text-[#656a60] hover:bg-paper aria-[current=page]:bg-[#fcf3cf] aria-[current=page]:font-semibold aria-[current=page]:text-[#35301a] aria-[current=page]:[&_svg]:text-[#897020] max-[760px]:justify-center max-[760px]:gap-2 max-[760px]:px-2 max-[760px]:py-[11px] max-[760px]:text-xs max-[760px]:[&_svg]:w-[17px]",
+    "relative flex items-center gap-[13px] rounded-[7px] px-3.5 py-[13px] font-medium text-[#656a60] hover:bg-paper aria-[current=page]:bg-[#fcf3cf] aria-[current=page]:font-semibold aria-[current=page]:text-[#35301a] aria-[current=page]:[&_svg]:text-[#897020] max-[760px]:justify-center max-[760px]:gap-2 max-[760px]:px-2 max-[760px]:py-[11px] max-[760px]:text-xs max-[760px]:[&_svg]:w-[17px]",
 } as const;

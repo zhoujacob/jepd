@@ -65,10 +65,12 @@ export function AvailabilityCell({
     <div>
       <select
         value={value}
-        disabled={pending}
+        // Not `disabled`: a disabled control drops keyboard focus to the page.
+        aria-busy={pending}
         aria-label={`Your availability for ${label}`}
         className={`${styles.responseSelect} ${responseStyles[value]}`}
         onChange={(event) => {
+          if (pending) return;
           const next = event.target.value as Availability | "";
           const previous = value;
           setValue(next);

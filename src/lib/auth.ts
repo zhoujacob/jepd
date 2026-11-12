@@ -9,14 +9,19 @@ import { isClubRole } from "@/lib/roles";
 export const getExec = cache(async () => {
   if (!getSupabaseConfig()) return null;
   const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  // Both checks must pass, and neither needs the other's result, so they share
+  // one round trip instead of running back to back.
+  const [
+    {
+      data: { user },
+      error,
+    },
+    { data: role, error: roleError },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.rpc("get_club_role"),
+  ]);
   if (error || !user?.email_confirmed_at) return null;
-
-  const { data: role, error: roleError } = await supabase.rpc("get_club_role");
-
   if (roleError || !isClubRole(role)) return null;
   return { ...user, role };
 });
